@@ -13,10 +13,11 @@ typedef struct aeroporto{
 typedef struct voos{   
     int codigorota;
     char nomeRota[100];
-    char horarioH[10];
-    char horarioS[10];
-    int poltronas;
-    float distancia;
+    int diaData;
+    int mesData;
+    int anoData;
+    int numeroPoltronas;
+    float milhas;
 }Voos;
 
 typedef struct funcionarios{
@@ -29,9 +30,9 @@ typedef struct clientes{
     int codigoPassageiro;
     char nomePassageiro[100];
     char rg[20];
-    long int cpf;
-    char dnasc[10];
-    long int telefone;
+    char cpf[20];
+    char dnasc[20];
+    char telefone[20];
     char email[50];
     char contEmergencia[20];
     int bagagem;
@@ -45,6 +46,13 @@ Funcionario *cadFuncio;
 /* VARIAVEIS GLOBAIS DA FUNCAO DE CLIENTES */
 int quantidade,cod;
 Clientes *cadClientes;
+
+/* VARIAVEIS GLOBAIS DA FUNCAO DE ROTAS */
+int quantidadeR,codR;
+Voos *cadVoos;
+
+/* PROTOTIPOS DAS FUNÇÕES */
+void menu1();
 
 void cadastraClientes(){
     
@@ -62,10 +70,11 @@ void cadastraClientes(){
         fflush(stdin);
         fgets(cadClientes[i].rg,20,stdin);
         printf("Digite o CPF: ");
-        scanf("%li",&cadClientes[i].cpf);
+        fflush(stdin);
+        fgets(cadClientes[i].cpf,20,stdin);
         printf("Data de nascimento no formato XX/XX/XXXX:  ");
         fflush(stdin);
-        fgets(cadClientes[i].dnasc,10,stdin);
+        fgets(cadClientes[i].dnasc,20,stdin);
         printf("Digite o telefone: ");
         scanf("%li",&cadClientes[i].telefone);
         printf("Digite o email: ");
@@ -78,6 +87,48 @@ void cadastraClientes(){
         scanf("%d",&cadClientes[i].bagagem);
 
     }
+}
+
+void pesquisaCliente(){
+    char nomeCliente[100];
+    int opAltera;
+    printf("Digite o nome do Cliente a ser pesquisado: ");
+    fflush(stdin);
+    fgets(nomeCliente,100,stdin);
+
+    for(int i=0; i < quantidade; i++){
+        if(strcmp(nomeCliente,cadClientes[i].nomePassageiro)==0){
+            printf("\n *** PASSAGEIRO ENCONTRADO **** \n ");
+            printf("Codigo: %d \n",cadClientes[i].codigoPassageiro);
+            printf("Nome: %s \n",cadClientes[i].nomePassageiro);
+            printf("RG: %s \n",cadClientes[i].rg);
+            printf("CPF: %s \n",cadClientes[i].cpf);
+            printf("Data de Nascimento: %s \n",cadClientes[i].dnasc);
+            printf("Telefone: %s \n",cadClientes[i].telefone);
+            printf("Email: %s \n",cadClientes[i].email);
+            printf("Contato de Emergencia: %s \n",cadClientes[i].contEmergencia);
+                if(cadClientes[i].bagagem==1){
+                    printf("\nBagagem extra:  SIM \n");
+                }else{
+                    printf("\nBagagem extra:  NAO \n");
+                }
+            printf(" _____________________________________________\n");
+            printf("|            DESEJA ALTERAR ESSE CLIENTE?     |\n");
+            printf("|_____________________________________________|\n\n");
+            printf("\nDigite 1 para alterar ou 2 para voltar: "); 
+            scanf("%d",&opAltera);
+                if(opAltera==1){
+                    printf("Digite o novo nome: ");
+                   
+                    
+                }else{
+                    menu1();
+                }                  
+        }else{
+            printf("Esse cliente nao existe \n");
+        }
+    }
+    
 }
 void cadastraAeroporto(){
 
@@ -106,8 +157,7 @@ void cadastraAeroporto(){
 }
 
 void cadastraRota(){
-    int quantidadeR,codR;
-    Voos *cadVoos;
+    
     printf("Quantas rotas deseja inserir: ");
     scanf("%d",&quantidadeR);
     cadVoos = malloc(quantidadeR * sizeof(Voos));
@@ -118,13 +168,16 @@ void cadastraRota(){
         printf("Nome da rota: ");
         fflush(stdin);
         fgets(cadVoos[i].nomeRota,100,stdin);
-        printf("Horario da rota XX:XX ");
-        fflush(stdin);
-        fgets(cadVoos[i].horarioH,10,stdin);
+        printf("Dia da rota/voo (Ex: 15):  ");
+        scanf("%d",&cadVoos[i].diaData);
+        printf("Mes da rota/voo (Ex: 10): ");
+        scanf("%d",&cadVoos[i].mesData);
+        printf("Ano da rota/voo (Ex: 2010): ");
+        scanf("%d",&cadVoos[i].anoData);
         printf("Quantidade de poltronas disponiveis: ");
-        scanf("%d",&cadVoos[i].poltronas);
+        scanf("%d",&cadVoos[i].numeroPoltronas);
         printf("Distancia em milhas: ");
-        scanf("%f",&cadVoos[i].distancia);      
+        scanf("%f",&cadVoos[i].milhas);      
         
     }
 
@@ -180,8 +233,8 @@ void menu2(){
 
     printf("\n[4] Cadastrar aeroportos");
     printf("\n[5] Cadastrar voos/trechos");
-    printf("\n[6] Cadastrar passageiros fidelizados");
-    printf("\n[7] Pesquisar/alterar dados de passageiros fidelizados");
+    printf("\n[6] Cadastrar passageiros");
+    printf("\n[7] Pesquisar/alterar dados de passageiros");
     printf("\n[8] Cadastrar funcionarios");
     printf("\n[9] Pesquisar/Alterar funcionarios");
     printf("\nOpcao: ");
@@ -199,9 +252,8 @@ void menu2(){
         case 6:
             cadastraClientes();
             break;
-        case 7:
-            printf("funcionou");
-            //alteraClientes():
+        case 7:            
+            pesquisaCliente();
             break;
         case 8:
             cadastraFuncionario();
@@ -247,7 +299,7 @@ void menu1(){
     printf("\n[1] Configuracoes");
     printf("\n[2] Vendas");
     printf("\n[3] Sair");
-    printf("\nOpcao: ");
+    printf("\nDigite uma opcao: ");
 
     scanf("%d", &op1);
 
@@ -269,7 +321,7 @@ void menu1(){
 int main(){
     setlocale(LC_ALL, "Portuguese");
 
-    printf("****** SEJA BEM VINDO AO PASSAGENS.JIK ******\n\n\n");
+    printf("****** SEJA BEM VINDO AO IKJ LINHAS AEREAS ******\n\n");
 
     menu1();
     return 0;
